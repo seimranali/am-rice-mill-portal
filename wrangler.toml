@@ -12,7 +12,7 @@ ADMIN_USER = "admin"
 [[d1_databases]]
 binding = "DB"
 database_name = "am-rice-mill"
-database_id = "REPLACE_WITH_D1_DATABASE_ID"
+database_id = "46d2ecad-faa7-4ef9-82e9-1d65fcc3d4b0"
 migrations_dir = "migrations"
 
 # ADMIN_PASSWORD_HASH is a secret — never put it in this file.
