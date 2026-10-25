@@ -1,0 +1,43 @@
+---
+import Icon from '../ui/Icon.astro';
+import Picture from '../ui/Picture.astro';
+import { aboutPoints, company } from '../../data/site';
+---
+
+<section class="section about" id="about" aria-labelledby="about-title">
+  <div class="container about__grid">
+    <div class="about__media" data-reveal>
+      <div class="about__frame">
+        <Picture name="about-plant" alt="Rice processing plant inside the AM Rice Mill factory" sizes="(min-width: 960px) 45vw, 100vw" width={800} height={450} />
+      </div>
+      <div class="about__badge">
+        <span class="icon-badge icon-badge--gold"><Icon name="wheat" size={24} /></span>
+        <span><strong>Complete</strong> rice value chain</span>
+      </div>
+    </div>
+
+    <div class="about__body">
+      <p class="eyebrow" data-reveal>Who We Are</p>
+      <h2 id="about-title" data-reveal style="--d: 60ms">About {company.name}</h2>
+      <p class="about__lead" data-reveal style="--d: 120ms">
+        {company.name} is involved in sourcing paddy, processing and milling rice, and supplying quality agricultural products to the market. Our operations connect farmers, processing, and customers through an efficient and reliable rice supply chain.
+      </p>
+      <p data-reveal style="--d: 160ms">
+        Based on Baigpur Road near Kamoke in District Gujranwala, Punjab, we work in one of Pakistan’s main rice-growing regions. Every stage, from the paddy we buy to the rice and by-products we supply, is handled with care, so our partners can rely on consistent products and professional service.
+      </p>
+      <ul class="checklist" data-reveal style="--d: 200ms">
+        {
+          aboutPoints.map((p) => (
+            <li>
+              <span class="checklist__tick"><Icon name="check" size={14} strokeWidth={2.5} /></span>
+              {p}
+            </li>
+          ))
+        }
+      </ul>
+      <a href="#business" class="btn btn--primary" data-reveal style="--d: 240ms">
+        Learn More <Icon name="arrow-right" size={18} />
+      </a>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,27 @@
+---
+import { stats, statsArePlaceholder } from '../../data/site';
+
+const fmt = (n: number) => n.toLocaleString('en-US');
+---
+
+<section class="stats" aria-labelledby="stats-title">
+  <div class="container">
+    <h2 id="stats-title" class="visually-hidden">AM Rice Mill in numbers</h2>
+    <div class="stats__panel" data-reveal>
+      <dl class="stats__grid">
+        {
+          stats.map((s) => (
+            <div class="stat">
+              <dt>{s.label}</dt>
+              <dd>
+                <span data-count={s.value}>{fmt(s.value)}</span>
+                {s.suffix}
+              </dd>
+            </div>
+          ))
+        }
+      </dl>
+      {statsArePlaceholder && <p class="stats__note">Sample figures shown for layout. They will be replaced with verified company data.</p>}
+    </div>
+  </div>
+</section>

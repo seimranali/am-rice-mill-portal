@@ -1,0 +1,61 @@
+---
+import Icon from '../ui/Icon.astro';
+import Picture from '../ui/Picture.astro';
+import SectionHeading from '../ui/SectionHeading.astro';
+import { gallery } from '../../data/site';
+---
+
+<section class="section section--tint gallery" id="gallery" aria-labelledby="gallery-title">
+  <div class="container">
+    <SectionHeading
+      id="gallery-title"
+      eyebrow="Gallery"
+      title="Inside our rice mill"
+      lead="Our milling machinery, storage bins and rice, from paddy to finished product."
+    />
+
+    <ul class="masonry">
+      {
+        gallery.map((g, i) => (
+          <li class="masonry__item" data-reveal style={`--d: ${(i % 3) * 70}ms`}>
+            <button
+              type="button"
+              class="masonry__btn"
+              data-lightbox={i}
+              data-full={`/images/${g.image}-1600.webp`}
+              data-caption={g.caption}
+              aria-label={`View larger image: ${g.caption}`}
+            >
+              <Picture
+                name={g.image}
+                alt={g.caption}
+                sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                height={g.h ?? 533}
+              />
+              <span class="masonry__caption">
+                <span>{g.caption}</span>
+                <Icon name="zoom-in" size={18} />
+              </span>
+            </button>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+
+  <dialog class="lightbox" aria-label="Image viewer" data-lightbox-dialog>
+    <button type="button" class="lightbox__close" data-lightbox-close aria-label="Close image viewer">
+      <Icon name="x" size={22} />
+    </button>
+    <button type="button" class="lightbox__nav lightbox__nav--prev" data-lightbox-prev aria-label="Previous image">
+      <Icon name="chevron-left" size={26} />
+    </button>
+    <figure class="lightbox__figure">
+      <img src="" alt="" data-lightbox-img />
+      <figcaption data-lightbox-caption></figcaption>
+    </figure>
+    <button type="button" class="lightbox__nav lightbox__nav--next" data-lightbox-next aria-label="Next image">
+      <Icon name="chevron-right" size={26} />
+    </button>
+  </dialog>
+</section>

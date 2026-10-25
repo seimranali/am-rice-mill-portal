@@ -1,0 +1,102 @@
+---
+import Icon from '../ui/Icon.astro';
+import SectionHeading from '../ui/SectionHeading.astro';
+import { team as allMembers } from '../../data/site';
+
+const team = allMembers.filter((m) => m.name.trim());
+
+const paragraphs = (text?: string) => (text ?? '').split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean);
+---
+
+<section class="section section--tint team" id="team" aria-labelledby="team-title">
+  <div class="container">
+    <SectionHeading
+      id="team-title"
+      eyebrow="Professional Team"
+      title="The people behind AM Rice Mill"
+      lead="An experienced team managing every stage of our business, from sourcing and processing to quality and supply."
+    />
+
+    <ul class="card-grid card-grid--4 team__grid">
+      {
+        team.map((m, i) => (
+          <li data-reveal style={`--d: ${(i % 4) * 90}ms`}>
+            <button
+              type="button"
+              class="team-card"
+              data-dialog-open={`team-${i + 1}`}
+              aria-haspopup="dialog"
+              aria-label={`${m.name}, ${m.role}. View profile`}
+            >
+              <span class="team-card__media">
+                {m.photo ? (
+                  <img src={m.photo} alt="" width="800" height="1000" loading="lazy" decoding="async" />
+                ) : (
+                  <svg class="team-card__placeholder" viewBox="0 0 160 200" aria-hidden="true">
+                    <circle cx="80" cy="78" r="30" />
+                    <path d="M22 200c0-38 26-64 58-64s58 26 58 64Z" />
+                  </svg>
+                )}
+                <span class="team-card__overlay">
+                  <span>
+                    <span class="team-card__name">{m.name}</span>
+                    <span class="team-card__role">{m.role}</span>
+                  </span>
+                  <span class="team-card__more" aria-hidden="true">
+                    <Icon name="arrow-right" size={18} />
+                  </span>
+                </span>
+              </span>
+            </button>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+
+  {
+    team.map((m, i) => (
+      <dialog class="modal modal--profile" id={`team-${i + 1}`} aria-labelledby={`team-${i + 1}-name`}>
+        <div class="modal__inner">
+          <button type="button" class="modal__close" data-dialog-close aria-label="Close profile">
+            <Icon name="x" size={20} />
+          </button>
+          <div class="modal__media">
+            {m.photo && <img src={m.photo} alt={`${m.name}, ${m.role}`} width="800" height="1000" loading="lazy" decoding="async" />}
+          </div>
+          <div class="modal__body">
+            <p class="eyebrow">Professional Team</p>
+            <h3 id={`team-${i + 1}-name`}>{m.name}</h3>
+            <p class="profile__role">{m.role}</p>
+            {paragraphs(m.description).length > 0 && (
+              <div class="profile__desc">
+                {paragraphs(m.description).map((p) => (
+                  <p>{p}</p>
+                ))}
+              </div>
+            )}
+            {(m.email || m.phone || m.linkedin) && (
+              <div class="profile__contact">
+                {m.email && (
+                  <a class="btn btn--outline btn--sm" href={`mailto:${m.email}`}>
+                    <Icon name="mail" size={16} /> Email
+                  </a>
+                )}
+                {m.phone && (
+                  <a class="btn btn--outline btn--sm" href={`tel:${m.phone.replace(/[^+\d]/g, '')}`}>
+                    <Icon name="phone" size={16} /> Call
+                  </a>
+                )}
+                {m.linkedin && (
+                  <a class="btn btn--outline btn--sm" href={m.linkedin} target="_blank" rel="noopener">
+                    <Icon name="linkedin" size={16} /> LinkedIn
+                  </a>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      </dialog>
+    ))
+  }
+</section>

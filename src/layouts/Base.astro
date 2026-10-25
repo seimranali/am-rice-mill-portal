@@ -1,0 +1,160 @@
+---
+import '../styles/global.css';
+import { brandProducts, company, faqs, riceBrand, team } from '../data/site';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { title = company.seoTitle, description = company.seoDescription } = Astro.props;
+
+const abs = (p: string) => new URL(p, company.url).href;
+const canonical = abs(Astro.url.pathname);
+const ogImage = abs('/images/og-image.jpg');
+const orgId = abs('/#organization');
+const founder = team.find((m) => m.role === 'Founder');
+
+// Structured data (schema.org) for search engines
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': ['Organization', 'LocalBusiness'],
+      '@id': orgId,
+      name: company.name,
+      legalName: company.legalName,
+      alternateName: 'AM Rice Mills',
+      slogan: company.tagline,
+      description: company.description,
+      url: company.url,
+      logo: abs('/images/logo-512.png'),
+      image: [abs('/images/hero-1600.webp'), abs('/images/logo-512.png')],
+      email: company.email,
+      telephone: `+${company.whatsapp}`,
+      ...(founder ? { founder: { '@type': 'Person', name: founder.name } } : {}),
+      address: { '@type': 'PostalAddress', ...company.addressParts },
+      geo: { '@type': 'GeoCoordinates', ...company.geo },
+      hasMap: company.mapUrl,
+      areaServed: { '@type': 'Country', name: 'Pakistan' },
+      openingHoursSpecification: [
+        {
+          '@type': 'OpeningHoursSpecification',
+          dayOfWeek: ['Saturday', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday'],
+          opens: '09:00',
+          closes: '18:00',
+        },
+      ],
+      contactPoint: {
+        '@type': 'ContactPoint',
+        contactType: 'sales',
+        telephone: `+${company.whatsapp}`,
+        email: company.email,
+        areaServed: 'PK',
+        availableLanguage: ['English', 'Urdu'],
+      },
+      brand: { '@type': 'Brand', name: riceBrand.name, slogan: riceBrand.slogan },
+      knowsAbout: ['Rice milling', 'Paddy procurement', 'Basmati rice', '1121 Steam rice', 'Super Karnal rice', 'Rice bran', 'Rice husk'],
+      makesOffer: [
+        ...brandProducts.map((p) => ({
+          '@type': 'Offer',
+          itemOffered: {
+            '@type': 'Product',
+            name: `${riceBrand.name} ${p.name}`,
+            description: p.text,
+            image: abs(p.image),
+            brand: { '@type': 'Brand', name: riceBrand.name },
+            manufacturer: { '@id': orgId },
+          },
+        })),
+        ...['Paddy', 'Rice Bran', 'Rice Husk', 'Broken Rice'].map((name) => ({
+          '@type': 'Offer',
+          itemOffered: { '@type': 'Product', name, manufacturer: { '@id': orgId } },
+        })),
+      ],
+    },
+    {
+      '@type': 'WebSite',
+      '@id': abs('/#website'),
+      url: company.url,
+      name: company.name,
+      inLanguage: 'en',
+      publisher: { '@id': orgId },
+    },
+    {
+      '@type': 'WebPage',
+      '@id': canonical + '#webpage',
+      url: canonical,
+      name: title,
+      description,
+      inLanguage: 'en',
+      isPartOf: { '@id': abs('/#website') },
+      about: { '@id': orgId },
+      primaryImageOfPage: ogImage,
+    },
+    {
+      '@type': 'FAQPage',
+      '@id': canonical + '#faq',
+      mainEntity: faqs.map((f) => ({
+        '@type': 'Question',
+        name: f.q,
+        acceptedAnswer: { '@type': 'Answer', text: f.a },
+      })),
+    },
+  ],
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script is:inline>document.documentElement.classList.add('js');</script>
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <link rel="canonical" href={canonical} />
+    <meta name="theme-color" content="#14332a" />
+    <link rel="icon" href="/favicon.png?v=2" type="image/png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=2" />
+    <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
+
+    <!-- Local business location -->
+    <meta name="geo.region" content="PK-PB" />
+    <meta name="geo.placename" content="Kamoke, Gujranwala" />
+    <meta name="geo.position" content={`${company.geo.latitude};${company.geo.longitude}`} />
+    <meta name="ICBM" content={`${company.geo.latitude}, ${company.geo.longitude}`} />
+
+    <!-- Social sharing -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={company.name} />
+    <meta property="og:locale" content="en_PK" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="AM Rice Mill, Purity in Every Grain, rice mill in Kamoke, Gujranwala" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+    />
+
+    <link rel="preload" as="image" href="/images/banners/banner-mill-1600.webp" imagesrcset="/images/banners/banner-mill-800.webp 800w, /images/banners/banner-mill-1600.webp 1600w" imagesizes="100vw" />
+
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <slot />
+  </body>
+</html>

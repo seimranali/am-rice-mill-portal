@@ -1,0 +1,11 @@
+---
+import Icon from '../ui/Icon.astro';
+import { company } from '../../data/site';
+
+const href = `https://wa.me/${company.whatsapp}?text=${encodeURIComponent(`Hello ${company.name}, I would like to inquire about your products.`)}`;
+---
+
+<a href={href} class="wa-fab" target="_blank" rel="noopener" aria-label="Chat with AM Rice Mill on WhatsApp">
+  <Icon name="whatsapp" size={28} />
+  <span class="wa-fab__label">Chat with us</span>
+</a>

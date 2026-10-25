@@ -1,0 +1,37 @@
+---
+import Picture from '../ui/Picture.astro';
+import SectionHeading from '../ui/SectionHeading.astro';
+import { byProducts } from '../../data/site';
+---
+
+<section class="section section--tint byproducts" id="by-products" aria-labelledby="byproducts-title">
+  <div class="container">
+    <div class="byproducts__head">
+      <SectionHeading
+        id="byproducts-title"
+        eyebrow="By-Products"
+        title="More Than Rice"
+        align="left"
+        lead="Our rice milling process produces valuable by-products, including rice bran, rice husk and broken rice, that we collect and supply for different commercial and agricultural applications."
+      />
+      <a href="#contact" class="btn btn--outline" data-inquire="Other By-Products" data-reveal>Ask about availability</a>
+    </div>
+
+    <div class="card-grid card-grid--4">
+      {
+        byProducts.map((b, i) => (
+          <article class="bp-card" data-reveal style={`--d: ${i * 80}ms`}>
+            <div class="bp-card__media">
+              <Picture name={b.image} alt={b.alt} sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw" />
+            </div>
+            <div class="bp-card__body">
+              <span class="bp-card__num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+              <h3>{b.name}</h3>
+              <p>{b.text}</p>
+            </div>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>

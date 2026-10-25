@@ -1,0 +1,68 @@
+---
+import Icon from '../ui/Icon.astro';
+import Picture from '../ui/Picture.astro';
+import SectionHeading from '../ui/SectionHeading.astro';
+import { products } from '../../data/site';
+---
+
+<section class="section section--tint products" id="products" aria-labelledby="products-title">
+  <div class="container">
+    <SectionHeading
+      id="products-title"
+      eyebrow="What We Supply"
+      title="Our Products"
+      lead="Four premium basmati varieties, milled, graded and sorted at our mill near Kamoke and supplied to traders, wholesalers, restaurants and distributors across Pakistan."
+    />
+
+    <div class="card-grid card-grid--4">
+      {
+        products.map((p, i) => (
+          <article class="product-card" data-reveal style={`--d: ${i * 100}ms`}>
+            <div class="product-card__media">
+              <Picture name={p.image} alt={p.alt} sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw" />
+              <span class="product-card__tag">0{i + 1}</span>
+            </div>
+            <div class="product-card__body">
+              <h3>{p.name}</h3>
+              <p>{p.text}</p>
+              <button type="button" class="btn btn--outline btn--sm" data-dialog-open={`product-${p.id}`} aria-haspopup="dialog">
+                View Details <Icon name="arrow-right" size={16} />
+              </button>
+            </div>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+
+  {
+    products.map((p) => (
+      <dialog class="modal" id={`product-${p.id}`} aria-labelledby={`product-${p.id}-title`}>
+        <div class="modal__inner">
+          <button type="button" class="modal__close" data-dialog-close aria-label="Close details">
+            <Icon name="x" size={20} />
+          </button>
+          <div class="modal__media">
+            <Picture name={p.image} alt={p.alt} sizes="(min-width: 768px) 420px, 100vw" />
+          </div>
+          <div class="modal__body">
+            <p class="eyebrow">Product</p>
+            <h3 id={`product-${p.id}-title`}>{p.name}</h3>
+            <p>{p.details}</p>
+            <dl class="spec-list">
+              {p.specs.map((s) => (
+                <div>
+                  <dt>{s.label}</dt>
+                  <dd>{s.value}</dd>
+                </div>
+              ))}
+            </dl>
+            <a href="#contact" class="btn btn--primary" data-inquire={p.name}>
+              Request a Quote <Icon name="arrow-right" size={18} />
+            </a>
+          </div>
+        </div>
+      </dialog>
+    ))
+  }
+</section>

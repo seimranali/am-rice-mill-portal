@@ -1,0 +1,41 @@
+---
+import Icon from '../ui/Icon.astro';
+import SectionHeading from '../ui/SectionHeading.astro';
+import { processSteps } from '../../data/site';
+---
+
+<section class="section process" id="process" aria-labelledby="process-title">
+  <div class="container">
+    <SectionHeading
+      id="process-title"
+      eyebrow="Our Rice Processing Journey"
+      title="From Paddy to Market"
+      lead="How paddy becomes finished rice at AM Rice Mill: six careful stages from sourcing and cleaning to milling, grading, quality control and packing."
+    />
+
+    <div class="timeline" data-timeline>
+      <span class="timeline__track" aria-hidden="true"><span class="timeline__fill"></span></span>
+      <ol class="timeline__list">
+        {
+          processSteps.map((step, i) => (
+            <li class="timeline__step" data-reveal style={`--d: ${i * 90}ms`}>
+              <span class="timeline__num" aria-hidden="true">
+                {String(i + 1).padStart(2, '0')}
+              </span>
+              <div class="timeline__card">
+                <div class="timeline__media">
+                  <img src={step.image} alt={step.title} width="600" height="450" loading="lazy" decoding="async" />
+                </div>
+                <span class="timeline__icon">
+                  <Icon name={step.icon} size={22} />
+                </span>
+                <h3>{step.title}</h3>
+                <p>{step.text}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </div>
+</section>

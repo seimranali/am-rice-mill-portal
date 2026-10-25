@@ -1,0 +1,251 @@
+---
+import '../styles/global.css';
+import { company } from '../data/site';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Admin | {company.name}</title>
+    <link rel="icon" href="/favicon.png" type="image/png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
+  </head>
+  <body class="admin">
+    <!-- Login -->
+    <main class="admin-login" data-view="login" hidden>
+      <form class="admin-card" data-login-form>
+        <img src="/images/logo.png?v=2" alt="" width="186" height="160" class="admin-card__logo" />
+        <h1>Admin sign in</h1>
+        <p class="admin-muted">{company.name} inquiries</p>
+        <label class="admin-field">
+          <span>Username</span>
+          <input name="username" autocomplete="username" required />
+        </label>
+        <label class="admin-field">
+          <span>Password</span>
+          <input name="password" type="password" autocomplete="current-password" required />
+        </label>
+        <p class="admin-error" role="alert" data-login-error></p>
+        <button class="btn btn--primary btn--block" type="submit">Sign in</button>
+        <a href="/" class="admin-back">← Back to website</a>
+      </form>
+    </main>
+
+    <!-- Dashboard -->
+    <div class="admin-app" data-view="app" hidden>
+      <header class="admin-top">
+        <div class="admin-top__brand">
+          <img src="/images/logo.png?v=2" alt="" width="186" height="160" />
+          <div><strong>{company.name}</strong><span>Contact inquiries</span></div>
+        </div>
+        <div class="admin-top__actions">
+          <a href="/" class="btn btn--outline btn--sm" target="_blank" rel="noopener">View site</a>
+          <button class="btn btn--primary btn--sm" type="button" data-logout>Sign out</button>
+        </div>
+      </header>
+
+      <main class="admin-main">
+        <section class="admin-stats">
+          <div class="admin-stat"><span>Total inquiries</span><strong data-stat-total>0</strong></div>
+          <div class="admin-stat admin-stat--new"><span>Unread</span><strong data-stat-unread>0</strong></div>
+        </section>
+
+        <section class="admin-toolbar">
+          <input type="search" placeholder="Search name, company, email, phone, product, message…" data-search />
+          <div class="admin-tabs" role="tablist">
+            <button type="button" class="is-active" data-filter="">All</button>
+            <button type="button" data-filter="new">Unread</button>
+            <button type="button" data-filter="read">Read</button>
+          </div>
+          <button type="button" class="btn btn--outline btn--sm" data-export>Export CSV</button>
+        </section>
+
+        <section class="admin-list" data-list aria-live="polite"></section>
+        <p class="admin-empty" data-empty hidden>No inquiries found.</p>
+      </main>
+    </div>
+
+    <script>
+      type Msg = { id: number; name: string; company: string; phone: string; email: string; product: string; message: string; status: 'new' | 'read'; created_at: string };
+      const q = <T extends Element = HTMLElement>(s: string) => document.querySelector<T>(s)!;
+      const api = async (path: string, opts: RequestInit = {}) => {
+        const res = await fetch(path, { credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, ...opts });
+        const body = await res.json().catch(() => ({}));
+        if (!res.ok) throw Object.assign(new Error(body.error || 'Request failed'), { status: res.status });
+        return body;
+      };
+      const esc = (s: string) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
+      const fmt = (d: string) => new Date(d.replace(' ', 'T') + 'Z').toLocaleString('en-GB', { dateStyle: 'medium', timeStyle: 'short' });
+
+      const show = (view: 'login' | 'app') => {
+        q('[data-view="login"]').hidden = view !== 'login';
+        q('[data-view="app"]').hidden = view !== 'app';
+      };
+
+      let filter = '';
+      let search = '';
+      let rows: Msg[] = [];
+
+      async function load() {
+        const params = new URLSearchParams();
+        if (filter) params.set('status', filter);
+        if (search) params.set('q', search);
+        try {
+          const data = await api('/api/admin/messages?' + params);
+          rows = data.messages;
+          q('[data-stat-total]').textContent = data.total;
+          q('[data-stat-unread]').textContent = data.unread;
+          render();
+        } catch (e: any) {
+          if (e.status === 401) show('login');
+        }
+      }
+
+      function render() {
+        const list = q('[data-list]');
+        q('[data-empty]').hidden = rows.length > 0;
+        list.innerHTML = rows
+          .map(
+            (m) => `
+          <article class="admin-msg ${m.status === 'new' ? 'is-new' : ''}" data-id="${m.id}">
+            <header>
+              <div>
+                <h2>${esc(m.name)}${m.company ? ` <small>· ${esc(m.company)}</small>` : ''}</h2>
+                <p class="admin-msg__meta">
+                  <a href="mailto:${esc(m.email)}">${esc(m.email)}</a> ·
+                  <a href="tel:${esc(m.phone.replace(/[^+\d]/g, ''))}">${esc(m.phone)}</a>
+                  ${m.product ? ` · <span class="admin-tag">${esc(m.product)}</span>` : ''}
+                </p>
+              </div>
+              <time>${fmt(m.created_at)}</time>
+            </header>
+            <p class="admin-msg__body">${esc(m.message)}</p>
+            <footer>
+              <a class="btn btn--whatsapp btn--sm" target="_blank" rel="noopener" href="https://wa.me/${esc(m.phone.replace(/\D/g, '').replace(/^0/, '92'))}">WhatsApp</a>
+              <button type="button" class="btn btn--outline btn--sm" data-toggle>${m.status === 'new' ? 'Mark as read' : 'Mark as unread'}</button>
+              <button type="button" class="btn btn--sm admin-danger" data-delete>Delete</button>
+            </footer>
+          </article>`,
+          )
+          .join('');
+      }
+
+      q('[data-list]').addEventListener('click', async (e) => {
+        const t = e.target as HTMLElement;
+        const card = t.closest<HTMLElement>('[data-id]');
+        if (!card) return;
+        const id = card.dataset.id;
+        const msg = rows.find((r) => String(r.id) === id)!;
+        if (t.closest('[data-toggle]')) {
+          await api(`/api/admin/messages/${id}`, { method: 'PATCH', body: JSON.stringify({ status: msg.status === 'new' ? 'read' : 'new' }) });
+          load();
+        } else if (t.closest('[data-delete]')) {
+          if (!confirm(`Delete the inquiry from ${msg.name}? This cannot be undone.`)) return;
+          await api(`/api/admin/messages/${id}`, { method: 'DELETE' });
+          load();
+        }
+      });
+
+      q('[data-login-form]').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const f = e.currentTarget as HTMLFormElement;
+        const err = q('[data-login-error]');
+        err.textContent = '';
+        try {
+          await api('/api/admin/login', { method: 'POST', body: JSON.stringify(Object.fromEntries(new FormData(f))) });
+          f.reset();
+          show('app');
+          load();
+        } catch (ex: any) {
+          err.textContent = ex.message;
+        }
+      });
+
+      q('[data-logout]').addEventListener('click', async () => {
+        await api('/api/admin/logout', { method: 'POST' }).catch(() => {});
+        show('login');
+      });
+
+      document.querySelectorAll<HTMLButtonElement>('[data-filter]').forEach((b) =>
+        b.addEventListener('click', () => {
+          document.querySelectorAll('[data-filter]').forEach((x) => x.classList.toggle('is-active', x === b));
+          filter = b.dataset.filter || '';
+          load();
+        }),
+      );
+      let timer: number | undefined;
+      q<HTMLInputElement>('[data-search]').addEventListener('input', (e) => {
+        clearTimeout(timer);
+        timer = window.setTimeout(() => { search = (e.target as HTMLInputElement).value.trim(); load(); }, 250);
+      });
+
+      q('[data-export]').addEventListener('click', () => {
+        const cols: (keyof Msg)[] = ['id', 'created_at', 'name', 'company', 'phone', 'email', 'product', 'message', 'status'];
+        const csv = [cols.join(','), ...rows.map((r) => cols.map((c) => `"${String(r[c] ?? '').replace(/"/g, '""')}"`).join(','))].join('\r\n');
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8' }));
+        a.download = `am-rice-mill-inquiries-${new Date().toISOString().slice(0, 10)}.csv`;
+        a.click();
+        URL.revokeObjectURL(a.href);
+      });
+
+      api('/api/admin/me').then(() => { show('app'); load(); }).catch(() => show('login'));
+    </script>
+
+    <style is:global>
+      body.admin { background: #f1f4f2; min-height: 100vh; }
+      [hidden] { display: none !important; }
+      .admin-muted { color: var(--muted); margin: 0 0 1.5rem; }
+      .admin-login { min-height: 100vh; display: grid; place-items: center; padding: 1.5rem; }
+      .admin-card { width: min(400px, 100%); padding: 2.25rem 2rem; background: #fff; border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); text-align: center; }
+      .admin-card__logo { width: 80px; height: auto; margin: 0 auto 1rem; }
+      .admin-card h1 { font-size: 1.5rem; margin-bottom: 0.25rem; }
+      .admin-field { display: grid; gap: 0.35rem; margin-bottom: 1rem; text-align: left; font-weight: 600; font-size: 0.9rem; }
+      .admin-field input, .admin-toolbar input {
+        min-height: 46px; padding: 0.65rem 0.9rem; border: 1.5px solid #dcdfdc; border-radius: 12px; font-size: 1rem; background: #fafbfa;
+      }
+      .admin-field input:focus, .admin-toolbar input:focus { outline: none; border-color: var(--green); box-shadow: 0 0 0 4px rgba(61, 122, 79, 0.15); background: #fff; }
+      .admin-error { min-height: 1.4em; color: #b3261e; font-size: 0.9rem; margin: 0 0 0.75rem; }
+      .admin-back { display: inline-block; margin-top: 1.25rem; color: var(--muted); font-size: 0.9rem; }
+
+      .admin-top { position: sticky; top: 0; z-index: 5; display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 0.75rem clamp(1rem, 3vw, 2rem); background: #fff; box-shadow: 0 1px 0 var(--line); }
+      .admin-top__brand { display: flex; align-items: center; gap: 0.75rem; }
+      .admin-top__brand img { width: 46px; height: auto; }
+      .admin-top__brand strong { display: block; }
+      .admin-top__brand span { font-size: 0.8rem; color: var(--muted); }
+      .admin-top__actions { display: flex; gap: 0.5rem; }
+      .admin-main { max-width: 1100px; margin: 0 auto; padding: 1.5rem clamp(1rem, 3vw, 2rem) 4rem; }
+      .admin-stats { display: grid; grid-template-columns: repeat(2, minmax(0, 220px)); gap: 1rem; margin-bottom: 1.25rem; }
+      .admin-stat { padding: 1rem 1.25rem; background: #fff; border-radius: var(--radius); box-shadow: var(--shadow-sm); }
+      .admin-stat span { display: block; font-size: 0.8rem; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; }
+      .admin-stat strong { font-size: 2rem; }
+      .admin-stat--new strong { color: var(--green-600); }
+      .admin-toolbar { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; margin-bottom: 1.25rem; }
+      .admin-toolbar input { flex: 1 1 280px; }
+      .admin-tabs { display: flex; padding: 4px; background: #fff; border-radius: 999px; box-shadow: var(--shadow-sm); }
+      .admin-tabs button { padding: 0.5rem 1rem; border: 0; border-radius: 999px; background: none; font-weight: 600; font-size: 0.9rem; color: var(--muted); }
+      .admin-tabs button.is-active { background: var(--forest); color: #fff; }
+      .admin-list { display: grid; gap: 0.85rem; }
+      .admin-msg { padding: 1.15rem 1.35rem; background: #fff; border-radius: var(--radius); box-shadow: var(--shadow-sm); border-left: 4px solid transparent; }
+      .admin-msg.is-new { border-left-color: var(--gold); }
+      .admin-msg header { display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+      .admin-msg h2 { font-size: 1.1rem; margin: 0 0 0.25rem; }
+      .admin-msg h2 small { font-weight: 500; color: var(--muted); font-size: 0.95rem; }
+      .admin-msg time { font-size: 0.85rem; color: var(--muted); white-space: nowrap; }
+      .admin-msg__meta { margin: 0; font-size: 0.9rem; color: var(--muted); }
+      .admin-msg__meta a { color: var(--green-600); font-weight: 500; }
+      .admin-tag { display: inline-block; padding: 0.1rem 0.6rem; border-radius: 999px; background: var(--green-100); color: var(--green-600); font-weight: 600; font-size: 0.8rem; }
+      .admin-msg__body { margin: 0.85rem 0; white-space: pre-wrap; color: var(--text); }
+      .admin-msg footer { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+      .admin-danger { --btn-bg: #fff; --btn-fg: #b3261e; border-color: #f0c9c6; }
+      .admin-danger:hover { --btn-bg: #b3261e; --btn-fg: #fff; }
+      .admin-empty { text-align: center; color: var(--muted); padding: 3rem 0; }
+      .admin .btn:hover { transform: none; }
+    </style>
+  </body>
+</html>

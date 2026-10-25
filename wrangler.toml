@@ -1,0 +1,19 @@
+# Cloudflare Pages configuration for amricemill.com
+name = "am-rice-mill"
+pages_build_output_dir = "dist"
+compatibility_date = "2026-10-01"
+
+[vars]
+ADMIN_USER = "admin"
+
+# D1 database for contact inquiries.
+# Create it with:  npx wrangler d1 create am-rice-mill
+# then paste the database_id it prints below.
+[[d1_databases]]
+binding = "DB"
+database_name = "am-rice-mill"
+database_id = "REPLACE_WITH_D1_DATABASE_ID"
+migrations_dir = "migrations"
+
+# ADMIN_PASSWORD_HASH is a secret — never put it in this file.
+# Set it with:  npx wrangler pages secret put ADMIN_PASSWORD_HASH --project-name am-rice-mill

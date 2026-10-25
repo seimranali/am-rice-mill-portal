@@ -1,0 +1,51 @@
+---
+import Icon from '../ui/Icon.astro';
+import SectionHeading from '../ui/SectionHeading.astro';
+import { brandProducts, company, riceBrand } from '../../data/site';
+
+const waLink = (product: string) =>
+  `https://wa.me/${company.whatsapp}?text=${encodeURIComponent(`Hello ${company.name}, I would like a quote for ${product}.`)}`;
+---
+
+<section class="section brands" id="rice-brands" aria-labelledby="brands-title">
+  <div class="container">
+    <SectionHeading
+      id="brands-title"
+      eyebrow="Our Rice Brand"
+      title={`${riceBrand.name} Rice`}
+      lead={`${riceBrand.name} 1121 Steam Rice, Special Adhwar Basmati Rice and Super Karnal Rice, milled and packed by AM Rice Mill in Gujranwala, Pakistan. ${riceBrand.slogan}.`}
+    />
+
+    <div class="brands__grid">
+      {
+        brandProducts.map((p, i) => (
+          <article class="brand-card" data-reveal style={`--d: ${i * 120}ms`}>
+            <div class="brand-card__media">
+              <img src={p.image} alt={p.alt} width="800" height="1000" loading="lazy" decoding="async" />
+            </div>
+            <div class="brand-card__body">
+              <p class="brand-card__brand">
+                {riceBrand.name} <span>· {p.tagline}</span>
+              </p>
+              <h3>{p.name}</h3>
+              <ul class="brand-card__tags">
+                {p.tags.map((t) => (
+                  <li>{t}</li>
+                ))}
+              </ul>
+              <p class="brand-card__text">{p.text}</p>
+              <div class="brand-card__actions">
+                <a href="#contact" class="btn btn--primary btn--sm" data-inquire={p.inquiry}>
+                  Request a Quote <Icon name="arrow-right" size={16} />
+                </a>
+                <a href={waLink(p.inquiry)} class="btn btn--outline btn--sm" target="_blank" rel="noopener">
+                  <Icon name="whatsapp" size={16} /> WhatsApp
+                </a>
+              </div>
+            </div>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>

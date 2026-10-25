@@ -1,0 +1,66 @@
+---
+import Icon from '../ui/Icon.astro';
+
+// Banner slides. Add more by dropping <name>-800.webp / -1600.webp into /public/images/banners.
+const slides = [
+  { image: 'banner-mill', alt: 'AM Rice Mills factory buildings with trucks of paddy, Quality Rice, Better Tomorrow', href: '#about' },
+  { image: 'banner-rice', alt: 'Premium quality rice, Pure Goodness from Nature, with a bowl of white rice and a paddy field', href: '#products' },
+];
+---
+
+<section class="hero-slider" id="home" aria-roledescription="carousel" aria-labelledby="hero-title" data-slider>
+  <h1 id="hero-title" class="visually-hidden">AM Rice Mill: Purity in Every Grain. Rice mill in Kamoke, Gujranwala, Pakistan</h1>
+
+  <div class="hero-slider__track" data-slider-track>
+    {
+      slides.map((s, i) => (
+        <a
+          href={s.href}
+          class:list={['hero-slider__slide', { 'is-active': i === 0 }]}
+          role="group"
+          aria-roledescription="slide"
+          aria-label={`${i + 1} of ${slides.length}`}
+          aria-hidden={i === 0 ? undefined : 'true'}
+          tabindex={i === 0 ? undefined : -1}
+          data-slide
+        >
+          <img
+            src={`/images/banners/${s.image}-1600.webp`}
+            srcset={`/images/banners/${s.image}-800.webp 800w, /images/banners/${s.image}-1600.webp 1600w`}
+            sizes="100vw"
+            alt={s.alt}
+            width="1600"
+            height="600"
+            loading={i === 0 ? 'eager' : 'lazy'}
+            fetchpriority={i === 0 ? 'high' : undefined}
+            decoding="async"
+          />
+        </a>
+      ))
+    }
+  </div>
+
+  <button type="button" class="hero-slider__nav hero-slider__nav--prev" aria-label="Previous slide" data-slider-prev>
+    <Icon name="chevron-left" size={24} />
+  </button>
+  <button type="button" class="hero-slider__nav hero-slider__nav--next" aria-label="Next slide" data-slider-next>
+    <Icon name="chevron-right" size={24} />
+  </button>
+
+  <div class="hero-slider__dots" role="tablist" aria-label="Choose slide">
+    {
+      slides.map((_, i) => (
+        <button
+          type="button"
+          class:list={['hero-slider__dot', { 'is-active': i === 0 }]}
+          role="tab"
+          aria-selected={i === 0 ? 'true' : 'false'}
+          aria-label={`Show slide ${i + 1}`}
+          data-slider-dot={i}
+        >
+          <span class="hero-slider__dot-fill" />
+        </button>
+      ))
+    }
+  </div>
+</section>

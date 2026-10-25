@@ -1,0 +1,66 @@
+---
+import Icon from '../ui/Icon.astro';
+import SectionHeading from '../ui/SectionHeading.astro';
+import { certifications, qualityFlow, qualityIndicators } from '../../data/site';
+---
+
+<section class="section section--dark quality" id="quality" aria-labelledby="quality-title">
+  <div class="quality__bg" aria-hidden="true"></div>
+  <div class="container">
+    <SectionHeading
+      id="quality-title"
+      eyebrow="Our Commitment"
+      title="Quality at Every Stage"
+      tone="dark"
+      lead="Quality is not a final check. It is considered at every step, from the paddy we select to the products we supply."
+    />
+
+    <ol class="quality-flow" data-reveal aria-label="Quality stages">
+      {
+        qualityFlow.map((stage, i) => (
+          <li style={`--i: ${i}`}>
+            <span class="quality-flow__dot" aria-hidden="true" />
+            <span>{stage}</span>
+          </li>
+        ))
+      }
+    </ol>
+
+    <div class="card-grid card-grid--4 quality__grid">
+      {
+        qualityIndicators.map((q, i) => (
+          <article class="q-card" data-reveal style={`--d: ${i * 90}ms`}>
+            <span class="q-card__ring" aria-hidden="true">
+              <svg class="q-card__ring-svg" viewBox="0 0 64 64">
+                <circle class="q-card__track" cx="32" cy="32" r="29" />
+                <circle class="q-card__progress" cx="32" cy="32" r="29" pathLength="100" />
+              </svg>
+              <Icon name={q.icon} size={24} />
+            </span>
+            <h3>{q.title}</h3>
+            <p>{q.text}</p>
+          </article>
+        ))
+      }
+    </div>
+
+    {
+      certifications.length > 0 && (
+        <div class="certs" data-reveal>
+          <p class="eyebrow">Certifications</p>
+          <ul>
+            {certifications.map((c) => (
+              <li>
+                <Icon name="shield-check" size={20} />
+                <span>
+                  <strong>{c.name}</strong>
+                  {c.issuer && <small>{c.issuer}</small>}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )
+    }
+  </div>
+</section>

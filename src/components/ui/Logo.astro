@@ -1,0 +1,16 @@
+---
+import { company } from '../../data/site';
+
+interface Props {
+  tone?: 'auto' | 'light';
+}
+const { tone = 'auto' } = Astro.props;
+---
+
+<a href="#home" class:list={['logo', `logo--${tone}`]} aria-label={`${company.name} — back to top`}>
+  <img class="logo__mark" src="/images/logo.png?v=2" alt="" width="186" height="160" decoding="async" />
+  <span class="logo__text">
+    <span class="logo__name">{company.name}</span>
+    <span class="logo__sub">{company.tagline}</span>
+  </span>
+</a>

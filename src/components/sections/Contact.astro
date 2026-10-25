@@ -1,0 +1,140 @@
+---
+import Icon from '../ui/Icon.astro';
+import { company, formEndpoint, productOptions } from '../../data/site';
+
+const waMessage = encodeURIComponent(`Hello ${company.name}, I would like to inquire about your products.`);
+const waHref = `https://wa.me/${company.whatsapp}?text=${waMessage}`;
+
+const details = [
+  ...(company.showPhone ? [{ icon: 'phone', label: 'Phone', value: company.phone, href: company.phoneHref }] : []),
+  { icon: 'whatsapp', label: 'WhatsApp', value: company.whatsappDisplay, href: waHref, external: true },
+  { icon: 'mail', label: 'Email', value: company.email, href: `mailto:${company.email}` },
+  { icon: 'map-pin', label: 'Address', value: company.address.join(', '), href: company.mapUrl, external: true },
+];
+---
+
+<section class="section contact" id="contact" aria-labelledby="contact-title">
+  <div class="container contact__grid">
+    <div class="contact__info">
+      <p class="eyebrow" data-reveal>Contact</p>
+      <h2 id="contact-title" data-reveal style="--d: 60ms">Let's Work Together</h2>
+      <p class="contact__lead" data-reveal style="--d: 120ms">
+        Looking for quality paddy, rice, or rice milling by-products? Get in touch with {company.name}.
+      </p>
+
+      <ul class="contact-list" data-reveal style="--d: 160ms">
+        {
+          details.map((d) => (
+            <li>
+              <span class="icon-badge icon-badge--soft icon-badge--sm">
+                <Icon name={d.icon} size={20} />
+              </span>
+              <span>
+                <small>{d.label}</small>
+                <a href={d.href} {...(d.external ? { target: '_blank', rel: 'noopener' } : {})}>
+                  {d.value}
+                </a>
+              </span>
+            </li>
+          ))
+        }
+        <li>
+          <span class="icon-badge icon-badge--soft icon-badge--sm">
+            <Icon name="clock" size={20} />
+          </span>
+          <span>
+            <small>Business Hours</small>
+            {
+              company.hours.map((h) => (
+                <span class="contact-list__hours">
+                  <span>{h.days}</span>
+                  <span>{h.time}</span>
+                </span>
+              ))
+            }
+          </span>
+        </li>
+      </ul>
+
+      <a href={waHref} class="btn btn--whatsapp btn--lg" target="_blank" rel="noopener" data-reveal style="--d: 200ms">
+        <Icon name="whatsapp" size={20} /> Chat on WhatsApp
+      </a>
+    </div>
+
+    <div class="contact__form-wrap" data-reveal style="--d: 120ms">
+      <form class="form" data-contact-form data-endpoint={formEndpoint} data-email={company.email} novalidate>
+        <h3 class="form__title">Send us an inquiry</h3>
+        <p class="form__hint">Fields marked <span aria-hidden="true">*</span><span class="visually-hidden">with an asterisk</span> are required.</p>
+
+        <div class="form__row">
+          <div class="field">
+            <label for="f-name">Name <span aria-hidden="true">*</span></label>
+            <input id="f-name" name="name" type="text" autocomplete="name" required />
+          </div>
+          <div class="field">
+            <label for="f-company">Company</label>
+            <input id="f-company" name="company" type="text" autocomplete="organization" />
+          </div>
+        </div>
+
+        <div class="form__row">
+          <div class="field">
+            <label for="f-phone">Phone <span aria-hidden="true">*</span></label>
+            <input id="f-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" required />
+          </div>
+          <div class="field">
+            <label for="f-email">Email <span aria-hidden="true">*</span></label>
+            <input id="f-email" name="email" type="email" autocomplete="email" required />
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="f-product">Product Interested In</label>
+          <div class="select">
+            <select id="f-product" name="product" data-product-select>
+              <option value="">Select a product</option>
+              {productOptions.map((o) => <option value={o}>{o}</option>)}
+            </select>
+          </div>
+        </div>
+
+        <div class="field">
+          <div class="visually-hidden" aria-hidden="true">
+            <label for="f-website">Website</label>
+            <input id="f-website" name="website" type="text" tabindex="-1" autocomplete="off" />
+          </div>
+          <label for="f-message">Message <span aria-hidden="true">*</span></label>
+          <textarea id="f-message" name="message" rows="5" required placeholder="Tell us about the product, quantity and delivery location you need."></textarea>
+        </div>
+
+        <button type="submit" class="btn btn--primary btn--lg btn--block">
+          Send Inquiry <Icon name="send" size={18} />
+        </button>
+        <p class="form__status" role="status" aria-live="polite" data-form-status></p>
+      </form>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="contact-map" data-reveal>
+      <div class="contact-map__head">
+        <span class="icon-badge icon-badge--soft icon-badge--sm"><Icon name="map-pin" size={20} /></span>
+        <div>
+          <h3>Our Location</h3>
+          <p>{company.plusCode}</p>
+        </div>
+        <a href={company.mapUrl} class="btn btn--outline btn--sm" target="_blank" rel="noopener">
+          Get Directions <Icon name="arrow-right" size={16} />
+        </a>
+      </div>
+      <iframe
+        class="contact-map__frame"
+        src={company.mapEmbedUrl}
+        title={`Map showing ${company.name} location`}
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"
+        allowfullscreen
+      ></iframe>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,33 @@
+---
+import Icon from '../ui/Icon.astro';
+import SectionHeading from '../ui/SectionHeading.astro';
+import { business } from '../../data/site';
+---
+
+<section class="section section--tint business" id="business" aria-labelledby="business-title">
+  <div class="container">
+    <SectionHeading
+      id="business-title"
+      eyebrow="Our Business"
+      title="One company across the rice value chain"
+      lead="From procurement to processing and supply, each part of our business is built to deliver quality and dependability."
+    />
+    <div class="card-grid card-grid--4">
+      {
+        business.map((item, i) => (
+          <article class="feature-card" data-reveal style={`--d: ${i * 80}ms`}>
+            <div class="feature-card__media">
+              <img src={item.image} alt={item.title} width="640" height="420" loading="lazy" decoding="async" />
+            </div>
+            <span class="icon-badge">
+              <Icon name={item.icon} size={26} />
+            </span>
+            <h3>{item.title}</h3>
+            <p>{item.text}</p>
+            <span class="feature-card__index" aria-hidden="true">0{i + 1}</span>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>

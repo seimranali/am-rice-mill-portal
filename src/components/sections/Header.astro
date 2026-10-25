@@ -1,0 +1,48 @@
+---
+import Logo from '../ui/Logo.astro';
+import Icon from '../ui/Icon.astro';
+import { company, nav, showTeam } from '../../data/site';
+
+const navItems = showTeam ? [...nav.slice(0, 4), { label: 'Our Team', href: '#team' }, ...nav.slice(4)] : nav;
+const waHref = `https://wa.me/${company.whatsapp}`;
+---
+
+<header class="site-header" data-header>
+  <div class="container site-header__inner">
+    <Logo />
+
+    <nav class="site-nav" aria-label="Primary">
+      <div class="site-nav__panel" id="site-nav-list" data-nav-list>
+        <ul class="site-nav__list">
+          {
+            navItems.map((item, i) => (
+              <li style={`--i: ${i}`}>
+                <a href={item.href} class="site-nav__link" data-nav-link>
+                  <span class="site-nav__num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+                  <span class="site-nav__label">{item.label}</span>
+                  <span class="site-nav__arrow" aria-hidden="true"><Icon name="arrow-right" size={18} /></span>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+
+        <div class="site-nav__mobile-foot">
+          <a href="#contact" class="btn btn--primary btn--block btn--lg">
+            Contact Us <Icon name="arrow-right" size={18} />
+          </a>
+          <div class="site-nav__quick">
+            <a href={waHref} target="_blank" rel="noopener"><Icon name="whatsapp" size={18} /> {company.whatsappDisplay}</a>
+            <a href={`mailto:${company.email}`}><Icon name="mail" size={18} /> {company.email}</a>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <a href="#contact" class="btn btn--primary btn--sm site-header__cta">Contact Us</a>
+
+    <button class="nav-toggle" type="button" aria-controls="site-nav-list" aria-expanded="false" aria-label="Open menu" data-nav-toggle>
+      <span class="nav-toggle__bars" aria-hidden="true"><span></span><span></span><span></span></span>
+    </button>
+  </div>
+</header>

@@ -1,0 +1,31 @@
+---
+import Icon from '../ui/Icon.astro';
+import SectionHeading from '../ui/SectionHeading.astro';
+import { features } from '../../data/site';
+---
+
+<section class="section why" id="why" aria-labelledby="why-title">
+  <div class="container">
+    <SectionHeading
+      id="why-title"
+      eyebrow="Why Choose Us"
+      title="Why AM Rice Mill?"
+      lead="What our customers and business partners can count on."
+    />
+    <div class="card-grid card-grid--3">
+      {
+        features.map((f, i) => (
+          <article class="why-card" data-reveal style={`--d: ${(i % 3) * 80}ms`}>
+            <span class="icon-badge icon-badge--soft">
+              <Icon name={f.icon} size={24} />
+            </span>
+            <div>
+              <h3>{f.title}</h3>
+              <p>{f.text}</p>
+            </div>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>

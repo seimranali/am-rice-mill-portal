@@ -1,0 +1,44 @@
+---
+import Base from '../layouts/Base.astro';
+import Header from '../components/sections/Header.astro';
+import Hero from '../components/sections/Hero.astro';
+import About from '../components/sections/About.astro';
+import Business from '../components/sections/Business.astro';
+import Process from '../components/sections/Process.astro';
+import Products from '../components/sections/Products.astro';
+import Quality from '../components/sections/Quality.astro';
+import WhyUs from '../components/sections/WhyUs.astro';
+import Team from '../components/sections/Team.astro';
+import Stats from '../components/sections/Stats.astro';
+import Gallery from '../components/sections/Gallery.astro';
+import SupplyChain from '../components/sections/SupplyChain.astro';
+import Faq from '../components/sections/Faq.astro';
+import Contact from '../components/sections/Contact.astro';
+import { showTeam } from '../data/site';
+import Footer from '../components/sections/Footer.astro';
+import WhatsAppFab from '../components/sections/WhatsAppFab.astro';
+---
+
+<Base>
+  <Header />
+  <main id="main">
+    <Hero />
+    <About />
+    <Business />
+    <Process />
+    <Products />
+    <Quality />
+    <WhyUs />
+    {showTeam && <Team />}
+    <Stats />
+    <Gallery />
+    <SupplyChain />
+    <Faq />
+    <Contact />
+  </main>
+  <Footer />
+  <WhatsAppFab />
+  <script>
+    import '../scripts/main.ts';
+  </script>
+</Base>

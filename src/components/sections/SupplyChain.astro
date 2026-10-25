@@ -1,0 +1,35 @@
+---
+import Icon from '../ui/Icon.astro';
+import SectionHeading from '../ui/SectionHeading.astro';
+import { supplyChain } from '../../data/site';
+---
+
+<section class="section supply" id="supply-chain" aria-labelledby="supply-title">
+  <div class="container">
+    <SectionHeading
+      id="supply-title"
+      eyebrow="Our Supply Chain"
+      title="Connecting farms to markets"
+      lead="AM Rice Mill sits at the centre of a supply chain that links growers with the customers and distributors who rely on consistent products."
+    />
+
+    <ol class="chain" data-reveal>
+      {
+        supplyChain.map((node, i) => (
+          <li class:list={['chain__node', { 'is-hub': node.icon === 'logo' }]} style={`--i: ${i}`}>
+            <span class="chain__icon">
+              {node.icon === 'logo' ? (
+                <img class="chain__logo" src="/images/logo.png?v=2" alt="" width="186" height="160" loading="lazy" />
+              ) : (
+                <Icon name={node.icon} size={28} />
+              )}
+            </span>
+            <strong>{node.title}</strong>
+            <span>{node.text}</span>
+            {i < supplyChain.length - 1 && <span class="chain__link" aria-hidden="true" />}
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>

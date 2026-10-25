@@ -1,0 +1,87 @@
+---
+import Icon from '../ui/Icon.astro';
+import Logo from '../ui/Logo.astro';
+import { company, showTeam, social } from '../../data/site';
+
+const links = [
+  { label: 'Home', href: '#home' },
+  { label: 'About', href: '#about' },
+  { label: 'Process', href: '#process' },
+  { label: 'Products', href: '#products' },
+  { label: 'Quality', href: '#quality' },
+  ...(showTeam ? [{ label: 'Our Team', href: '#team' }] : []),
+  { label: 'FAQ', href: '#faq' },
+  { label: 'Contact', href: '#contact' },
+];
+const productLinks = [
+  { label: 'Super Kernel Basmati', href: '#products' },
+  { label: '1121 Sella Basmati', href: '#products' },
+  { label: '1121 Steam Basmati', href: '#products' },
+  { label: '1121 Golden Sella', href: '#products' },
+];
+const activeSocial = social.filter((s) => s.url);
+---
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="site-footer__grid">
+      <div class="site-footer__brand">
+        <Logo tone="light" />
+        <p>
+          {company.name} sources paddy, processes and mills rice, and supplies quality rice, paddy and rice milling by-products to customers and business partners.
+        </p>
+      </div>
+
+      <nav aria-label="Footer">
+        <h2 class="site-footer__title">Navigation</h2>
+        <ul>
+          {links.map((l) => <li><a href={l.href}>{l.label}</a></li>)}
+        </ul>
+      </nav>
+
+      <div>
+        <h2 class="site-footer__title">Products</h2>
+        <ul>
+          {productLinks.map((l) => <li><a href={l.href}>{l.label}</a></li>)}
+        </ul>
+      </div>
+
+      <div>
+        <h2 class="site-footer__title">Get in touch</h2>
+        <ul class="site-footer__contact">
+          {company.showPhone && <li><Icon name="phone" size={16} /><a href={company.phoneHref}>{company.phone}</a></li>}
+          <li><Icon name="whatsapp" size={16} /><a href={`https://wa.me/${company.whatsapp}`} target="_blank" rel="noopener">{company.whatsappDisplay}</a></li>
+          <li><Icon name="mail" size={16} /><a href={`mailto:${company.email}`}>{company.email}</a></li>
+          <li><Icon name="map-pin" size={16} /><span>{company.address.join(', ')}</span></li>
+        </ul>
+      </div>
+
+      <div class="site-footer__social-col">
+        <h2 class="site-footer__title">Follow us</h2>
+        {
+          activeSocial.length > 0 && (
+            <ul class="social social--column">
+              {activeSocial.map((s) => (
+                <li>
+                  <a href={s.url} target="_blank" rel="noopener" class:list={['social-link', `social-link--${s.icon}`]}>
+                    <span class="social-link__icon"><Icon name={s.icon} size={18} /></span>
+                    <span class="social-link__label">{s.label}</span>
+                    <span class="social-link__arrow" aria-hidden="true"><Icon name="arrow-right" size={14} /></span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          )
+        }
+      </div>
+    </div>
+
+    <div class="site-footer__bottom">
+      <p>© 2026 {company.legalName}. All Rights Reserved.</p>
+      <a href="#home" class="btn btn--sm to-top">
+        Back to top
+        <span class="to-top__icon"><Icon name="arrow-up" size={16} strokeWidth={2.25} /></span>
+      </a>
+    </div>
+  </div>
+</footer>

@@ -1,0 +1,28 @@
+{
+  "name": "am-rice-mill",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "dev:full": "astro build && wrangler pages dev",
+    "db:migrate": "wrangler d1 migrations apply am-rice-mill --remote",
+    "hash-password": "node scripts/hash-password.mjs"
+  },
+  "dependencies": {
+    "astro": "^7.3.5"
+  },
+  "allowScripts": {
+    "esbuild@0.28.2": true,
+    "workerd@1.20261019.1": true,
+    "sharp@0.35.5": true
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "@cloudflare/workers-types": "^5.20261025.1",
+    "typescript": "^6.0.3",
+    "wrangler": "^4.152.0"
+  }
+}

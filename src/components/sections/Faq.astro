@@ -1,0 +1,29 @@
+---
+import Icon from '../ui/Icon.astro';
+import SectionHeading from '../ui/SectionHeading.astro';
+import { faqs } from '../../data/site';
+---
+
+<section class="section section--tint faq" id="faq" aria-labelledby="faq-title">
+  <div class="container faq__inner">
+    <SectionHeading
+      id="faq-title"
+      eyebrow="FAQ"
+      title="Frequently asked questions"
+      lead="Answers to common questions about our rice, paddy, by-products and ordering."
+    />
+    <div class="faq__list">
+      {
+        faqs.map((f, i) => (
+          <details class="faq__item" data-reveal style={`--d: ${(i % 3) * 60}ms`} open={i === 0}>
+            <summary>
+              <h3>{f.q}</h3>
+              <span class="faq__icon" aria-hidden="true"><Icon name="arrow-down" size={18} /></span>
+            </summary>
+            <p>{f.a}</p>
+          </details>
+        ))
+      }
+    </div>
+  </div>
+</section>

@@ -1,0 +1,19 @@
+---
+interface Props {
+  eyebrow?: string;
+  title: string;
+  lead?: string;
+  align?: 'left' | 'center';
+  tone?: 'light' | 'dark';
+  id?: string;
+}
+
+const { eyebrow, title, lead, align = 'center', tone = 'light', id } = Astro.props;
+---
+
+<header class:list={['section-heading', `is-${align}`, `on-${tone}`]} data-reveal>
+  {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+  <h2 id={id}>{title}</h2>
+  {lead && <p class="lead">{lead}</p>}
+  <slot />
+</header>
